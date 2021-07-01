@@ -2,7 +2,7 @@
 const remoteURL = "https://raw.githubusercontent.com/rd-astros/hiring-resources/master/pitches.json";
 const localURL = "../sampledata/pitches.json";
 
-fetchData(localURL);
+fetchData(remoteURL);
 
 function fetchData(url) {
     const xhttp = new XMLHttpRequest();
