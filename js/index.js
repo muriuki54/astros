@@ -1,6 +1,6 @@
 // FETCH DATA
 const remoteURL = "https://raw.githubusercontent.com/rd-astros/hiring-resources/master/pitches.json";
-const localURL = "../pitches.json";
+const localURL = "../sampledata/pitches.json";
 
 fetchData(remoteURL);
 
