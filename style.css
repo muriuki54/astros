@@ -145,11 +145,13 @@ nav {
 /* SINGLE EVENT ******/
 
 .single_event {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     left: 0;
     background-color: rgba(0, 0, 0, 0.6);
+    height: 100vh;
+    overflow-y: scroll;
 }
 
 .single_event.hide {
