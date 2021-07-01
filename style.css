@@ -65,7 +65,23 @@ nav {
     margin: 6px 0px;
     font-weight: bolder;
 }
+
+.headers {
+    display: flex;
+    justify-content: space-evenly;
+    color: #0e7492;
+}
+
+.headers p {
+    flex: 1;
+}
 /* single event card */
+
+#all_events {
+    height: 100vh;
+    overflow-y: scroll;
+    padding-right: 20px;
+}
 
 .event {
     background-color: #f3f3f3;
@@ -259,6 +275,16 @@ nav {
     .wrapper_inner {
         display: flex;
         flex-direction: column-reverse;
+    }
+
+    .headers {
+        flex-direction: column;
+    }
+
+    .headers p {
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
     }
 
     .event {

@@ -2,7 +2,7 @@
 const remoteURL = "https://raw.githubusercontent.com/rd-astros/hiring-resources/master/pitches.json";
 const localURL = "../sampledata/pitches.json";
 
-fetchData(remoteURL);
+fetchData(localURL);
 
 function fetchData(url) {
     const xhttp = new XMLHttpRequest();
@@ -133,7 +133,7 @@ function displayPitchingTechniques(techniques) {
     new Chart(document.getElementById("pitchData"), pitchConfig);
 }
 
-function dislayInitialSpeeds(events) {
+/*function dislayInitialSpeeds(events) {
 
 
     // initial speeds (to compare to pitch type) - scatter graph
@@ -141,7 +141,7 @@ function dislayInitialSpeeds(events) {
     const initialSpeedsConfigData = {
         datasets: [{
             label: 'Initial speeds',
-            data: events.map(event => ({x: parseInt(event.plate_speed).toFixed(2), y: parseInt(event.initial_speed).toFixed(1)})),
+            data: events.map(event => ({x: parseFloat(event.plate_speed).toFixed(2), y: parseFloat(event.initial_speed).toFixed(1)})),
             backgroundColor: 'rgb(255, 99, 132)'
         }],
     };
@@ -160,15 +160,30 @@ function dislayInitialSpeeds(events) {
     };
 
     new Chart(document.getElementById("initialSpeedsData"), initialSpeedsConfig);
-}
+}*/
 
 //////////////////////////////////////////////////
 /////////// MODAL ///////////////////////////////
 
+let speedChart;
+let accelChart;
+let velocityChart;
+let positionsChart;
+
 function openModal(play) {
     const event = JSON.parse(decodeURIComponent(play));
-    console.log(event);
 
+    let links = document.querySelectorAll(".event_link button");
+    let modal = document.querySelector(".single_event");
+
+    Object.keys(links).forEach(function(key) {
+        links[key].addEventListener("click", function() {
+            console.log("clicked")
+            modal.classList.remove("hide");
+        })
+    })
+
+    document.querySelector(".single_event_details").innerHTML = "";
     document.querySelector(".single_event_details").innerHTML = `<div class="single_event_date">
                                                                     <small class="date"><i class="fas fa-calendar-day"></i> ${event.time_code.split("T")[0].replace(/-/g, " / ")}</small>
                                                                     <p class="time"><i class="fas fa-clock"></i> ${event.time_code.split("T")[1]}</p>
@@ -214,15 +229,7 @@ function openModal(play) {
                                                                     </div>
                                                                     
                                                                 </div>`;
-    const links = document.querySelectorAll(".event_link button");
-    const modal = document.querySelector(".single_event");
 
-    Object.keys(links).forEach(function(key) {
-        links[key].addEventListener("click", function() {
-            console.log("clicked")
-            modal.classList.remove("hide");
-        })
-    })
 
     //numerical stats
     const numericalStatsConfigData = {
@@ -241,21 +248,25 @@ function openModal(play) {
     data: numericalStatsConfigData,
     options: {indexAxis:"y"}
     }
-    new Chart(document.getElementById("event_numerical_stats"), numericalStatsConfig);
+
+    // destroy any previous chart drawn on the canvas
+    speedChart && speedChart.destroy();
+    speedChart = new Chart(document.getElementById("event_numerical_stats"), numericalStatsConfig);
 
     // Acceleration
     const accelConfigData = {
         labels: ["Initial acceleration Y", "Initial acceleration Z", "Initial acceleration X"],
         datasets: [{
-                label: 'Acceleration',
+                label: 'Acceleration (feet/s/s)',
                 data: [pad(event.init_accel_y), pad(event.init_accel_z), pad(event.init_accel_x)],
-                fill: true,
+                fill: false,
                 backgroundColor: 'rgba(255, 205, 86, 0.6)',
                 borderColor: 'rgba(255, 205, 86, 0.6)',
                 pointBackgroundColor: 'rgba(255, 205, 86, 0.6)',
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(255, 205, 86, 0.6)'
+                pointHoverBorderColor: 'rgba(255, 205, 86, 0.9)',
+                pointRadius: 8
             }]
     }
 
@@ -265,21 +276,23 @@ function openModal(play) {
     options: {elements: {line: {borderWidth: 2}}}
     }
 
-    new Chart(document.getElementById("accel"), accelConfig);
+    accelChart && accelChart.destroy();
+    accelChart = new Chart(document.getElementById("accel"), accelConfig);
 
     // Velocity
     const velocityConfigData = {
         labels: ["Initial velocity Y", "Initial velocity Z", "Initial velocity X"],
         datasets: [{
-                label: 'Initial velocities',
+                label: 'Initial velocities (feet/s)',
                 data: [pad(event.init_vel_y), pad(event.init_vel_z), pad(event.init_vel_x)],
-                fill: true,
+                fill: false,
                 backgroundColor: 'rgba(153, 102, 255, 0.6)',
                 borderColor: 'rgba(153, 102, 255, 0.6)',
                 pointBackgroundColor: 'rgba(153, 102, 255, 0.6)',
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(153, 102, 255, 0.6)'
+                pointHoverBorderColor: 'rgba(153, 102, 255, 0.9)',
+                pointRadius: 8
             }]
     }
 
@@ -289,21 +302,23 @@ function openModal(play) {
     options: {elements: {line: {borderWidth: 2}}}
     }
 
-    new Chart(document.getElementById("velocity"), velocityConfig);
+    velocityChart && velocityChart.destroy();
+    velocityChart = new Chart(document.getElementById("velocity"), velocityConfig);
 
     // Positions
     const eventPositionsConfigData = {
         labels: ["Plate position Y", "Plate position Z", "Plate position X"],
         datasets: [{
-                label: 'Plate positions',
+                label: 'Plate positions(feet)',
                 data: [pad(event.plate_y), pad(event.plate_z), pad(event.plate_x)],
-                fill: true,
+                fill: false,
                 backgroundColor: "rgba(75, 192, 192, 0.6)",
                 borderColor:"rgba(75, 192, 192, 0.6)",
                 pointBackgroundColor: "rgba(75, 192, 192, 0.6)",
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: "rgba(75, 192, 192, 0.6)"
+                pointHoverBorderColor: "rgba(75, 192, 192, 0.9)",
+                pointRadius: 8
             }]
     }
 
@@ -313,7 +328,8 @@ function openModal(play) {
     options: {elements: {line: {borderWidth: 2}}}
     }
 
-    new Chart(document.getElementById("event_positions"), eventPositionsConfig);
+    positionsChart && positionsChart.destroy();
+    positionsChart = new Chart(document.getElementById("event_positions"), eventPositionsConfig);
 
 }
 
@@ -383,7 +399,7 @@ function randomColor() {
 
 ////////////////////////////
 function pad(num) {
-    return parseInt(num).toFixed(1);
+    return parseFloat(num).toFixed(2);
 }
 
 // reset the other filter select boxes
